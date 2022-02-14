@@ -26,3 +26,29 @@ h1{
     font-family: 'Armata', sans-serif;
 
 }
+
+nav{
+    height: 50px;
+    background-color: rgb(29, 29, 29);
+    text-align: center;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+a{
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+}
+a:hover{
+    color: rgb(221, 221, 221);
+    transition: 1s;
+}
+a:not(:hover){
+    font-size: 30px;
+    transition: 1s;
+
+}
+li{
+    list-style-type: none;
+}
