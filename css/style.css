@@ -7,13 +7,17 @@ body{
     
 }
 .main{
-    height: 100vh;
-    width: 100vw;
+    min-height:  100vh;
+    min-width: 100vw;
+}
+.header{
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-content: space-between;
     align-items: center;
     justify-content: center;
+    background-color: rgb(28, 179, 179);
+    padding: 10px;
 }
 h1{
     color: white;
@@ -24,31 +28,34 @@ h1{
 }
 #dev{
     font-family: 'Armata', sans-serif;
-
 }
 
 nav{
-    height: 50px;
     background-color: rgb(29, 29, 29);
     text-align: center;
-    display:flex;
-    justify-content: center;
-    align-items: center;
 }
 a{
     text-decoration: none;
     color: white;
     font-size: 30px;
+    margin: 10px;
+    
 }
 a:hover{
     color: rgb(221, 221, 221);
     transition: 1s;
 }
-a:not(:hover){
-    font-size: 30px;
-    transition: 1s;
 
+ul{
+    display: flex;
+    justify-content: center;
 }
 li{
+    border-left: solid rgb(58, 58, 58);
+    border-right: solid rgb(58, 58, 58);
     list-style-type: none;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: centers;
 }
