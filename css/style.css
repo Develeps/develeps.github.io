@@ -109,3 +109,20 @@ html, body {
     color: #aaa;
   }
   
+  /* вместо фиксированного font-size */
+.content .main-title {
+  /* минимум 2.5rem, максимум 6rem, а между — 12vw (процент от ширины экрана) */
+  font-size: clamp(2.5rem, 12vw, 6rem);
+  margin: 0;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  /* чтобы многословные названия корректно переносились, если нужно */
+  word-break: break-word;
+}
+
+/* при особо узких экранах можно чуть подправить отступы */
+@media (max-width: 400px) {
+  .content {
+    padding: 0 0.5em;
+  }
+}
