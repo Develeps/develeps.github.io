@@ -1,174 +1,179 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Develeps - Создаем и улудшаем</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/script.js"></script>
+  <meta charset="UTF-8">
+  <title>Нейросеть + фигуры + движущиеся соты</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; overflow: hidden; background: #000; height: 100%;
+    }
+    #bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+    }
+    .content {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      color: #fff; font-family: sans-serif; text-align: center;
+      pointer-events: none;
+    }
+    .content h1 { font-size: 3rem; margin: .5em 0; }
+    .content p  { font-size: 1.25rem; }
+  </style>
 </head>
-
 <body>
-    <header>
-        <nav class="nav-bar">
-            <h1>Develeps</h1>
-            <ul>
-                <li><a href="#project">Проекты</a></li>
-                <li><a href="#abouth">О себе</a></li>
-                <li><a href="#contact">Контакты</a></li>
-            </ul>
-        </nav>
-        <div class="header-content">
-            <div class="header-content-two">
-                <div class="header-content-video">
+  <canvas id="bg"></canvas>
+  <div class="content">
+    <div>
+      <h1>Фон‑нейросеть + фигуры + движущиеся соты</h1>
+      <p>Шестиугольники равномерны по форме, но хаотично разбросаны и слегка двигаются</p>
+    </div>
+  </div>
 
-                </div>
-            </div>
-            <div class="header-content-two">
-                <p>
-                    “Не бойтесь рисковать и выходить из зоны комфорта, ведь только так вы сможете достичь своих целей.”
-                    <br>
-                    - Тони Роббинс
-                </p>
-            </div>
-        </div>
-    </header>
+  <script>
+    const canvas = document.getElementById('bg');
+    const ctx    = canvas.getContext('2d');
 
-    <main>
+    // Подгоняем canvas под окно
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-        <section id="project">
-            <hr>
-            <div class="content">
-                <div class="content-header">
-                    <h2>Проекты</h2>
-                    <p>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Soluta iure repellat quos eaque
-                        consectetur doloremque veritatis unde facilis quidem sequi quaerat commodi laborum cum corporis
-                        recusandae explicabo fugiat, perspiciatis delectus?
-                    </p>
-                </div>
-                <div class="content-body">
-                    <div id="projects">
-                    </div>
+    // ───── узлы "нейросети" ─────
+    class Node {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.vx = (Math.random()-0.5)*0.5;
+        this.vy = (Math.random()-0.5)*0.5;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x<0||this.x>canvas.width)  this.vx*=-1;
+        if (this.y<0||this.y>canvas.height) this.vy*=-1;
+      }
+    }
+    const NODES_COUNT = 80;
+    const nodes = Array.from({length:NODES_COUNT}, ()=>new Node());
 
-                </div>
-            </div>
-        </section>
+    // ───── фигуры (включая "соты") ─────
+    const SHAPES_COUNT = 60;
+    const shapeTypes = ['square','circle','cross','triangle','dot','hexagon'];
+    const shapes = Array.from({length:SHAPES_COUNT}, ()=>{
+      return {
+        type: shapeTypes[Math.floor(Math.random()*shapeTypes.length)],
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        vx: (Math.random()-0.5)*0.8,
+        vy: (Math.random()-0.5)*0.8,
+        size: 12 + Math.random()*18,
+        color: `hsl(${Math.random()*360},70%,60%)`
+      };
+    });
 
+    function updateAndDrawShapes(){
+      for (let s of shapes) {
+        // движение и отражение от границ
+        s.x += s.vx; s.y += s.vy;
+        if (s.x<0||s.x>canvas.width)  s.vx*=-1;
+        if (s.y<0||s.y>canvas.height) s.vy*=-1;
 
-        <section id="abouth">
-            <hr>
-            <div class="content">
-                <div class="content-header">
-                    <h2>О себе</h2>
-                    <p>
-                        Меня зовут Sugu Sei.
-                        <br>
-                        Мне 24 года, обажаю учится чему то новому, если это окажется инетересным. 
-                        <br>
-                        Мечтаю создать что реально мозго выносяшее.
-                        <br>
-                        <br>
+        ctx.fillStyle = s.color;
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2;
 
-                        Краткая история жизни:
-                        <br>
-                        Отучился в школе до 9 класса, после сдачи ГИА, поступил в колледж на
-                        Программиста, но у вы программирования там было совсем мало, поэтому пришлось учится самому,
-                        паралельно с колледжом, проходил обучения в вечерней школе для сдачи ЕГЭ и блогополучно сдал
-                        экзамены, после окончания колледжа поступил в университет по направлению Радиофизик, но и за
-                        отсутствие отсрочки от армии я не смог доучиться и пошел одовать долг родине.
-                        <br>
-                        <br>
+        switch(s.type){
+          case 'square':
+            ctx.fillRect(s.x - s.size/2, s.y - s.size/2, s.size, s.size);
+            break;
 
-                        Вопрос: Почему не было отсрочки?
-                        <br>
-                        Ответ: Во время обучения в колледже даётся отсрочко от армии, после обучения отсрочка теряет свое
-                        дееспособности, вот так вот.
-                        <br>
-                        <br>
-                        После года (заключения) службы, я продолжил учится в университете и спустя 4 года окончил
-                        универ с дипломом бакалавра по направлению Радиофизика.
-                    </p>
-                    <div class="skills">
-                        <ol>
-                            <h4>Образование</h4>
-                            <li>Школа - среднее образование 11 классов</li>
-                            <li>Колледж - среднее профессиональное образование</li>
-                            <li>Университет - высшее образование бакалавра</li>
-                        </ol>
-                        <ol>
-                            <h4>Интересы</h4>
-                            <li>Радиотехника</li>
-                            <li>Программирование</li>
-                            <li>Физика</li>
-                            <li>Дизайн</li>
-                        </ol>
-                        <ol>
-                            <h4>Хобби</h4>
-                            <li>Разбирать все что попадется в руки</li>
-                            <li>Покупать гиговские примочки</li>
-                            <li>Собирать гаджеты из всего что есть</li>
-                        </ol>
-                    </div>
-                </div>
+          case 'circle':
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size/2, 0, Math.PI*2);
+            ctx.fill();
+            break;
 
-            </div>
-        </section>
+          case 'dot':
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 2, 0, Math.PI*2);
+            ctx.fill();
+            break;
 
+          case 'cross':
+            ctx.beginPath();
+            ctx.moveTo(s.x - s.size/2, s.y - s.size/2);
+            ctx.lineTo(s.x + s.size/2, s.y + s.size/2);
+            ctx.moveTo(s.x + s.size/2, s.y - s.size/2);
+            ctx.lineTo(s.x - s.size/2, s.y + s.size/2);
+            ctx.stroke();
+            break;
 
-        <section id="contact">
-            <hr>
-            <div class="content">
-                <div class="content-header">
-                    <h2>Контакты</h2>
-                    <p>
+          case 'triangle':
+            ctx.beginPath();
+            ctx.moveTo(s.x,         s.y - s.size/2);
+            ctx.lineTo(s.x + s.size/2, s.y + s.size/2);
+            ctx.lineTo(s.x - s.size/2, s.y + s.size/2);
+            ctx.closePath();
+            ctx.fill();
+            break;
 
-                        На YouTube вы сможете узнать меня в живую.  
-                        <br>
-                        <br>
+          case 'hexagon':
+            // правильный шестиугольник со "радиусом" size
+            const r = s.size;
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+              const ang = Math.PI/3 * i;
+              const px  = s.x + Math.cos(ang) * r;
+              const py  = s.y + Math.sin(ang) * r;
+              i===0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            break;
+        }
+      }
+    }
 
-                        На GitHub вы сможете получить доступ ко всем моим проектам.
-                        <br>
-                        <br>
+    // ───── отрисовка всего вместе ─────
+    function draw(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                        Пишите в telegram или на почту, если у вас есть пожелания или предолжение о работе.
+      // нейросеть: ребра
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i+1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 150) {
+            ctx.strokeStyle = `rgba(255,255,255,${1 - dist/150})`;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      // нейросеть: узлы
+      nodes.forEach(n => {
+        n.update();
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 2, 0, Math.PI*2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+      });
 
-                    </p>
-                </div>
-                <div class="content-body">
-                    <div class="socmedia">
-                        <div class="socmedia-card">
-                            <img src="/icons/youtube.svg" alt="">
-                            <a href="https://www.youtube.com/channel/UC93WrQ202QH63w3jW8IX2lQ">Sugu Sei</a>
-                        </div>
+      // фигуры и соты
+      updateAndDrawShapes();
 
-                        <div class="socmedia-card">
-                            <img src="/icons/github.svg" alt="">
-                            <a href="https://github.com/Develeps">Develeps</a>
-                        </div>
+      requestAnimationFrame(draw);
+    }
 
-                        <div class="socmedia-card">
-                            <img src="/icons/telegram.svg" alt="">
-                            <a href="https://t.me/SuguSei">@Sugu_Sei</a>
-                        </div>
-
-                        <div class="socmedia-card">
-                            <img src="/icons/email.svg" alt="">
-                            <a href="mailto:develeps@sugusei.ru">develeps@sugusei.ru</a>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
-
-
-    </main>
-
-    <footer>
-        &copy Develeps 2023 GitHub Pages
-    </footer>
+    draw();
+  </script>
 </body>
-
 </html>
